@@ -1,0 +1,126 @@
+@extends('front.layouts.master')
+
+@section('title')
+    @lang('translation.index')
+@endsection
+
+@section('body')
+
+    <body data-sidebar="dark" data-layout-scrollable="true">
+@endsection
+
+    @section('content')
+        @if($advertisement && $advertisement->actve)
+            <div class="text-center mb-1">
+                <div class="advertisement-container" style="position: relative; display: inline-block; max-width: 800px;">
+                    <img src="{{ asset('uploads/ads/' . $advertisement->image) }}" alt="Advertisement" class="img-fluid rounded"
+                        style="width: 100%; height: auto; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+                    @if($advertisement->description)
+                        <div class="mt-1" style="position: relative; overflow: hidden; height: 40px; background: rgba(0, 0, 0, 0.7); white-space: nowrap;
+                                        border-radius: 18px 18px;">
+                            <div style="
+                                        display: inline-block;
+                                        white-space: nowrap;
+                                        padding-left: 100%;
+                                        animation: marquee-inline 15s linear infinite;
+                                        color: white;
+                                        font-size: clamp(12px, 2.5vw, 20px);
+                                        line-height: 40px;
+                                    ">
+                                <!-- <span>{{ $advertisement->description }}</span> -->
+                                <span style="margin-left: 50px;">{{ $advertisement->description }}</span>
+                            </div>
+                        </div>
+                        <style>
+                            @keyframes marquee-inline {
+                                0% {
+                                    transform: translateX(0);
+                                }
+
+                                100% {
+                                    transform: translateX(-100%);
+                                }
+                            }
+                        </style>
+                    @endif
+                </div>
+            </div>
+        @endif
+
+
+
+        <div class="app-search d-lg-block mb-1 animate__animated animate__fadeInDown">
+            <div class="position-relative">
+                <input type="text" class="form-control" id="searchInput" placeholder="@lang('translation.Search')">
+                <span class="bx bx-search-alt"></span>
+            </div>
+        </div>
+
+        {{-- قائمة التصنيفات --}}
+        <div class="row">
+            <div class="form-group products">
+                <div class="form-row">
+                    <div class="w-100">
+                        <ul class="products_list" id="products_list">
+                            @isset($categories)
+                                @foreach($categories as $category)
+                                    <li class="col-4 pr-0 pl-0">
+                                        @if ($category->active)
+                                            <a href="{{ route('front.game.category', $category->id) }}"
+                                                class="product_group @if(!$category->active || $category->games->count() == 0) disabled @endif"
+                                                data-group="soulchill">
+                                                <div class="name_wrp"
+                                                    style="background-image:url('{{ asset('uploads/categories/' . $category->image) }}');">
+                                                    <div class="icon">
+                                                        <img src="{{ asset('uploads/categories/' . $category->image) }}"
+                                                            alt="{{ $category->name }}" width="90">
+                                                    </div>
+                                                </div>
+                                                <span class="d-block mt-2 mb-2">{{$category->name}}</span>
+                                            </a>
+                                        @else
+                                            <a href="{{ 'javascript:void(0)' }}"
+                                                class="product_group @if(!$category->active || $category->games->count() == 0) disabled @endif"
+                                                data-group="soulchill">
+                                                <div class="name_wrp"
+                                                    style="background-image:url('{{ asset('uploads/categories/' . $category->image) }}');">
+                                                    <div class="icon">
+                                                        <img src="{{ asset('uploads/categories/' . $category->image) }}"
+                                                            alt="{{ $category->name }}" width="90">
+                                                    </div>
+                                                </div>
+                                                <span class="d-block mt-2 mb-2">{{$category->name}}</span>
+                                            </a>
+                                        @endif
+                                    </li>
+                                @endforeach
+                            @endisset
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endsection
+
+    @section('script')
+        {{-- إضافة حركة عند الكتابة في شريط البحث --}}
+        <script>
+            $(document).ready(function () {
+                // الحركة عند الكتابة
+                $('#searchInput').on('input', function () {
+                    $(this).addClass('animate__animated animate__pulse');
+                    setTimeout(() => {
+                        $(this).removeClass('animate__animated animate__pulse');
+                    }, 500);
+                });
+
+                // فحص النص المدخل في البحث لعرض أو إخفاء التصنيفات
+                $('#searchInput').on('keyup', function () {
+                    var value = $(this).val().toLowerCase();
+                    $('#products_list li').filter(function () {
+                        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                    });
+                });
+            });
+        </script>
+    @endsection
