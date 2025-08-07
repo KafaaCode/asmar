@@ -65,15 +65,27 @@ unset($__errorArgs, $__bag); ?>
                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
 
-
-
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="validationCustom02" class="form-label">
+                                    رأس المال</label>
+                                <input type="number" class="form-control" id="validationCustom02"
+                                    placeholder="<?php echo app('translator')->get('translation.price_qty'); ?>" required name="price_temp" step="any">
+                                <div class="valid-feedback">
+                                    <?php echo app('translator')->get('translation.validPrice_qty'); ?>
+                                </div>
+                                <div class="invalid-feedback">
+                                    <?php echo app('translator')->get('translation.invalidPrice_qty'); ?>.
+                                </div>
+                            </div>
+                        </div>
 
                         <div class="col-md-4">
                             <div class="mb-3">
                                 <label for="validationCustom02" class="form-label">
-                                    <?php echo app('translator')->get('translation.price_qty'); ?></label>
-                                <input type="number" class="form-control" id="validationCustom02"
-                                    placeholder="<?php echo app('translator')->get('translation.price_qty'); ?>" required name="price_qty" step="any">
+                                    نسبة الخصم</label>
+                                <input type="number" class="form-control" id="validationCustom02" placeholder="نسبة الخصم"
+                                    required name="percentage" step="any">
                                 <div class="valid-feedback">
                                     <?php echo app('translator')->get('translation.validPrice_qty'); ?>
                                 </div>
@@ -169,10 +181,10 @@ unset($__errorArgs, $__bag); ?>
                         </div>
 
                         <div class="col-md-6">
-                                <div class="mb-3">
+                            <div class="mb-3">
                                 <label for="validationCustom03" class="form-label">على مدار الساعة؟</label>
                                 <select class="form-select" id="validationCustom03" required name="houre">
-                                    <option  disabled value=""> <?php echo app('translator')->get('translation.Choose'); ?></option>
+                                    <option disabled value=""> <?php echo app('translator')->get('translation.Choose'); ?></option>
                                     <option value="1"><?php echo app('translator')->get('translation.active'); ?></option>
                                     <option value="0"><?php echo app('translator')->get('translation.unactive'); ?></option>
                                 </select>
@@ -226,7 +238,7 @@ unset($__errorArgs, $__bag); ?>
                         </div>
                     </div>
 
-                    
+
 
                     <div class="row" id="last_row">
                         <div class="col-md-12">

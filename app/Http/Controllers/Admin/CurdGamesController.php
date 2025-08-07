@@ -104,6 +104,14 @@ class CurdGamesController extends Controller
                 $image->move(public_path('uploads/games'), $filename);
                 $data['image'] = $filename;
             }
+
+            if ($request->percentage) {
+                $final_price = $request->price_temp - ($request->price_temp * ($request->percentage / 100));
+            } else {
+                $final_price = $request->price_temp;
+            }
+
+            $data['price_qty'] = $final_price;
             $game = Game::create($data);
             if ($request->have_packages == 1) {
                 $packages = [];
@@ -191,7 +199,13 @@ class CurdGamesController extends Controller
                 $data['image'] = $filename;
             }
 
+            if ($request->percentage) {
+                $final_price = $request->price_temp - ($request->price_temp * ($request->percentage / 100));
+            } else {
+                $final_price = $request->price_temp;
+            }
 
+            $data['price_qty'] = $final_price;
 
             $game->update($data);
 

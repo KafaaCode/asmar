@@ -42,7 +42,6 @@ class GameRequest extends FormRequest
             'need_id_player' => 'nullable',
             'description' => 'nullable',
             'houre' => 'nullable',
-            'price_qty' => 'required',
             'image' => 'nullable|image',
             'category_id' => 'required',
             'min_qty' => 'required|integer|min:1',
