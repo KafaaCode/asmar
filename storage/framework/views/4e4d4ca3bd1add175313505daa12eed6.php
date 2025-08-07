@@ -1,8 +1,8 @@
-@extends('front.layouts.master')
 
-@section('title') @lang('translation.index') @endsection
-@section('styles')
-    <link href="{{asset('build/libs/sweetalert2/sweetalert2.min.css')}}" rel="stylesheet" type="text/css" />
+
+<?php $__env->startSection('title'); ?> <?php echo app('translator')->get('translation.index'); ?> <?php $__env->stopSection(); ?>
+<?php $__env->startSection('styles'); ?>
+    <link href="<?php echo e(asset('build/libs/sweetalert2/sweetalert2.min.css')); ?>" rel="stylesheet" type="text/css" />
 
     <style>
         .card-login{
@@ -238,7 +238,7 @@
         }
     </style>
 
-    @if(LaravelLocalization::getCurrentLocaleDirection() == 'rtl')
+    <?php if(LaravelLocalization::getCurrentLocaleDirection() == 'rtl'): ?>
         <style>
             .pull-right {
                 float: right;
@@ -250,7 +250,7 @@
                 margin-right: 10px;
             }
         </style>
-    @else
+    <?php else: ?>
         <style>
             strong.product-name {
                 margin-left: 10px;
@@ -263,179 +263,210 @@
                 margin: 0 auto;
             }
         </style>
-    @endif
-@endsection
-@section('body')
+    <?php endif; ?>
+<?php $__env->stopSection(); ?>
+<?php $__env->startSection('body'); ?>
     <body data-sidebar="dark" data-layout-scrollable="true">
-@endsection
+<?php $__env->stopSection(); ?>
 
-@section('content')
+<?php $__env->startSection('content'); ?>
     <div class="container-fluid">
-        @if(auth()->check() && $userDiscount && !($userDiscount->amount == 0))
+        <?php if(auth()->check() && $userDiscount && !($userDiscount->amount == 0)): ?>
             <div class="alert alert-success text-center">
-                لديك خصم بنسبة {{ $userDiscount->amount }}% سيتم تطبيقه تلقائياً.
+                لديك خصم بنسبة <?php echo e($userDiscount->amount); ?>% سيتم تطبيقه تلقائياً.
             </div>
-        @endif
-        <form method="post" action="{{route('front.game.order')}}" id="neworder">
-            @csrf
+        <?php endif; ?>
+        <form method="post" action="<?php echo e(route('front.game.order')); ?>" id="neworder">
+            <?php echo csrf_field(); ?>
             <div class="checkout form-group">
                 <div class="form-row">
                     <div class="col">
                         <ul class="products_list">
-                            @if($game->have_packages)
-                                @foreach($game->packages as $package)
-                                    <li class="package" onclick="changePackage({{$package->id}},{{$package->quantity}},{{get_helper_price($package->price,false)}})">
-                                        <a  data-id="{{$package->id}}" data-price="{{get_helper_price($package->price,false)}} " data-group="pubg" class="product_group @if(!$package->is_active || !$game->is_active) disabled @endif ">
-                                            <div class="name_wrp" style="background-image:url({{$game->background_package}});">
-                                                <div class="text">{{$game->title}} {{$package->quantity}} {{$game->name_currency}}</div>
+                            <?php if($game->have_packages): ?>
+                                <?php $__currentLoopData = $game->packages; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $package): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <li class="package" onclick="changePackage(<?php echo e($package->id); ?>,<?php echo e($package->quantity); ?>,<?php echo e(get_helper_price($package->price,false)); ?>)">
+                                        <a  data-id="<?php echo e($package->id); ?>" data-price="<?php echo e(get_helper_price($package->price,false)); ?> " data-group="pubg" class="product_group <?php if(!$package->is_active || !$game->is_active): ?> disabled <?php endif; ?> ">
+                                            <div class="name_wrp" style="background-image:url(<?php echo e($game->background_package); ?>);">
+                                                <div class="text"><?php echo e($game->title); ?> <?php echo e($package->quantity); ?> <?php echo e($game->name_currency); ?></div>
                                                 <div class="clear"></div>
                                                 <div class="icon">
-                                                    <img src="{{$game->icon_currancy}}">
+                                                    <img src="<?php echo e($game->icon_currancy); ?>">
                                                 </div>
-                                                <div class="checked" id="package-checked-{{$package->id}}">
+                                                <div class="checked" id="package-checked-<?php echo e($package->id); ?>">
                                                     <i class="fa fa-check text-success " style="font-size: 17px;font-weight: 900;"></i>
                                                 </div>
-                                                @if(!$package->is_active || !$game->is_active)
-                                                    <span class="statusbadge badge badge-danger">{{__('translation.unavailable')}}</span>
-                                                @endif
+                                                <?php if(!$package->is_active || !$game->is_active): ?>
+                                                    <span class="statusbadge badge badge-danger"><?php echo e(__('translation.unavailable')); ?></span>
+                                                <?php endif; ?>
 
                                             </div>
                                             <div class="price">
-                                                {{get_helper_price($package->price,true)}}
+                                                <?php echo e(get_helper_price($package->price,true)); ?>
+
                                                 <br>
                                             </div>
                                         </a>
                                     </li>
-                                @endforeach
-                            @endisset
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                            <?php endif; ?>
                         </ul>
-                        @error('package_id')
+                        <?php $__errorArgs = ['package_id'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
                         <span class="alert alert-danger ">
-                                <strong>{{ $message }}</strong>
+                                <strong><?php echo e($message); ?></strong>
                             </span>
-                        @enderror
+                        <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                     </div>
                 </div>
 
-                    <input type="hidden" id="qty_item" name="qty_item"  value="{{$game->have_packages ? 0 : 1}}">
+                    <input type="hidden" id="qty_item" name="qty_item"  value="<?php echo e($game->have_packages ? 0 : 1); ?>">
                                     <div class="form-row">
                     <div class="col">
-                        <input type="hidden" id="game_id" name="game_id" value="{{$game->id}}">
+                        <input type="hidden" id="game_id" name="game_id" value="<?php echo e($game->id); ?>">
                         <input type="hidden" id="package_id" name="package_id" value="">
                     </div>
                 </div>
                 <div class="form-row row" id="checkout">
                     <div class="w-100 alert alert-info customAmount d-none pull-right">
-                        <div class="pull-right w-100"> {{__('translation.Enter the quantity to be purchased')}}</div>
+                        <div class="pull-right w-100"> <?php echo e(__('translation.Enter the quantity to be purchased')); ?></div>
                     </div>
                     <div class="col-6">
-                        <label for="qty">{{__('translation.qty')}}</label>
+                        <label for="qty"><?php echo e(__('translation.qty')); ?></label>
                         <input 
                             name="qty" 
-                            value="{{ $game->min_qty }}" 
-                            min="{{ $game->min_qty }}" 
+                            value="<?php echo e($game->min_qty); ?>" 
+                            min="<?php echo e($game->min_qty); ?>" 
                             class="form-control" 
                             id="qty" 
                             type="number"
-                            placeholder="{{__('translation.qty')}}"
+                            placeholder="<?php echo e(__('translation.qty')); ?>"
                         >
                         <span id="qty-error" class="alert alert-danger" style="display:none; margin-top:5px;">
-                          اقل كمية للطلب هي {{$game->min_qty}}
+                          اقل كمية للطلب هي <?php echo e($game->min_qty); ?>
+
                         </span>
-                        @error('qty')
+                        <?php $__errorArgs = ['qty'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
                             <span class="alert alert-danger ">
-                                <strong>{{ $message }}</strong>
+                                <strong><?php echo e($message); ?></strong>
                             </span>
-                        @enderror
+                        <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                     </div>
                     <div class="col-6">
-                        <label for="total">@lang('translation.final_total')</label>
-                        <input name="total" value="{{number_format($game->price_qty,10)}}" class="form-control" id="total" type="number" disabled>
+                        <label for="total"><?php echo app('translator')->get('translation.final_total'); ?></label>
+                        <input name="total" value="<?php echo e(number_format($game->price_qty,10)); ?>" class="form-control" id="total" type="number" disabled>
                         
                         <!-- Hidden fields for calculations -->
-                        <input name="base_total" value="{{number_format($game->price_qty,10)}}" class="form-control d-none" id="base_total" type="hidden">
-                        <input name="profit_percentage" value="{{ auth()->check() ? auth()->user()->level->profit_percentage : 0 }}" class="form-control d-none" id="profit_percentage" type="hidden">
+                        <input name="base_total" value="<?php echo e(number_format($game->price_qty,10)); ?>" class="form-control d-none" id="base_total" type="hidden">
+                        <input name="profit_percentage" value="<?php echo e(auth()->check() ? auth()->user()->level->profit_percentage : 0); ?>" class="form-control d-none" id="profit_percentage" type="hidden">
                         <input name="profit_amount" value="0" class="form-control d-none" id="profit_amount" type="hidden">
-                        <input name="final_total" value="{{number_format($game->price_qty,10)}}" class="form-control d-none" id="final_total" type="hidden">
-                        <input name="price_item" value="{{number_format($game->price_qty,10)}}" class="form-control" id="price_item" type="hidden">
-                        <input name="currency_code" value="{{ get_currency_code() }}" class="form-control" id="currency_code" type="hidden">
+                        <input name="final_total" value="<?php echo e(number_format($game->price_qty,10)); ?>" class="form-control d-none" id="final_total" type="hidden">
+                        <input name="price_item" value="<?php echo e(number_format($game->price_qty,10)); ?>" class="form-control" id="price_item" type="hidden">
+                        <input name="currency_code" value="<?php echo e(get_currency_code()); ?>" class="form-control" id="currency_code" type="hidden">
                     </div>
                 </div>
                 <div class="row player_info">
-                    @if($game->need_id_player)
+                    <?php if($game->need_id_player): ?>
                     <div class="col-6">
-                        @if ($game->labelText)
-                            <label for="playername">{{$game->labelText}}</label>
-                        @else
-                            <label for="playerid">{{__('translation.playerid')}}</label>
-                        @endif
-                        <input name="playerid" type="tel" value="" class="form-control" required="" id="playerid" placeholder="{{__('translation.playerid')}}">
-                        @error('playerid')
+                        <?php if($game->labelText): ?>
+                            <label for="playername"><?php echo e($game->labelText); ?></label>
+                        <?php else: ?>
+                            <label for="playerid"><?php echo e(__('translation.playerid')); ?></label>
+                        <?php endif; ?>
+                        <input name="playerid" type="tel" value="" class="form-control" required="" id="playerid" placeholder="<?php echo e(__('translation.playerid')); ?>">
+                        <?php $__errorArgs = ['playerid'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
                         <span class="alert alert-danger ">
-                                <strong>{{ $message }}</strong>
+                                <strong><?php echo e($message); ?></strong>
                             </span>
-                        @enderror
+                        <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                     </div>
-                    @endif
+                    <?php endif; ?>
 
-                    @if($game->need_name_player)
+                    <?php if($game->need_name_player): ?>
                         <div class="col-6">
-                            @if ($game->labelText)
-                                <label for="playername">{{$game->labelText}}</label>
-                            @else
-                                <label for="playername">{{__('translation.playername')}}</label>
-                            @endif
+                            <?php if($game->labelText): ?>
+                                <label for="playername"><?php echo e($game->labelText); ?></label>
+                            <?php else: ?>
+                                <label for="playername"><?php echo e(__('translation.playername')); ?></label>
+                            <?php endif; ?>
                             <div style="display: flex;">
                                 <input name="playername" value="" class="form-control" id="playername" type="text" >
                                 <a href="#" id="reset_player_name" class="pull-right mr-2" style="display:none;"><i class="fa fa-times"></i></a>
                             </div>
-                            @error('playername')
+                            <?php $__errorArgs = ['playername'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
                             <span class="alert alert-danger ">
-                                <strong>{{ $message }}</strong>
+                                <strong><?php echo e($message); ?></strong>
                             </span>
-                            @enderror
+                            <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                         </div>
-                    @endif
+                    <?php endif; ?>
                 </div>
             </div>
 
-            @if ($game->description)
+            <?php if($game->description): ?>
                 <div class="alert-wrap mt-3 checkout">
                     <div class="alert alert-success product-info">
-                        <strong class="product-name mr-2 ml-2">{{$game->description}}</strong>
+                        <strong class="product-name mr-2 ml-2"><?php echo e($game->description); ?></strong>
                     </div>
                 </div>            
-            @endif
+            <?php endif; ?>
             
-            @if($game->houre == true)
+            <?php if($game->houre == true): ?>
                 <div>
                     <div class="alert alert-info w-100 processing-method automatic pull-right">
                         <div class="pull-right w-100">
                             <img src="https://alza3eem.shop/img/smile.png">
                             &nbsp;
-                            {{__('translation.This product operates automatically, 24 hours a day, all year round')}}</div>
+                            <?php echo e(__('translation.This product operates automatically, 24 hours a day, all year round')); ?></div>
                     </div>
                 </div>
-            @endif
+            <?php endif; ?>
             <div class="form-group mt-2">
-                <label for="note">{{__('translation.notes')}}:</label>
-                <textarea name="note" class="form-control" id="note" placeholder="{{__('translation.Insert a note for the sales team (optional)')}}"></textarea>
+                <label for="note"><?php echo e(__('translation.notes')); ?>:</label>
+                <textarea name="note" class="form-control" id="note" placeholder="<?php echo e(__('translation.Insert a note for the sales team (optional)')); ?>"></textarea>
             </div>
         </form>
         <div class="row mt-3">
-            @auth()
+            <?php if(auth()->guard()->check()): ?>
                 <button type="submit" 
                         class="btn btn-primary btn-block checkout w-50 m-auto"
                         id="submit"
                         onclick="this.disabled=true;document.getElementById('neworder').submit()">
-                    {{__('translation.add')}}
+                    <?php echo e(__('translation.add')); ?>
+
                 </button>
-            @endauth
+            <?php endif; ?>
         </div>
     </div>
-@endsection
+<?php $__env->stopSection(); ?>
 
-@section('script')
+<?php $__env->startSection('script'); ?>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const qtyInput = document.getElementById('qty');
@@ -455,28 +486,28 @@
 </script>
 
     <!-- Sweet Alerts js -->
-    <script src="{{asset('build/libs/sweetalert2/sweetalert2.min.js')}}"></script>
-    @if(session()->has('error_m'))
+    <script src="<?php echo e(asset('build/libs/sweetalert2/sweetalert2.min.js')); ?>"></script>
+    <?php if(session()->has('error_m')): ?>
         <script>
             Swal.fire({
-                title: '{{__('translation.error')}}',
-                text: '{{session()->get('error_m')}}',
+                title: '<?php echo e(__('translation.error')); ?>',
+                text: '<?php echo e(session()->get('error_m')); ?>',
                 icon: 'error',
             })
         </script>
-    @endif
+    <?php endif; ?>
 
-    @if(session()->has('message'))
+    <?php if(session()->has('message')): ?>
         <script>
             Swal.fire({
-                title:"{{__('translation.done')}}",
-                text:"{{session()->get('message')}}",
+                title:"<?php echo e(__('translation.done')); ?>",
+                text:"<?php echo e(session()->get('message')); ?>",
                 icon:"success"
             })
         </script>
-    @endif
+    <?php endif; ?>
     <script>
-        @if(!$game->have_packages) getQty(); @endif
+        <?php if(!$game->have_packages): ?> getQty(); <?php endif; ?>
         
         function changePackage(id, qty, price_item) {
             $('.package .checked').hide();
@@ -489,15 +520,15 @@
 
         function getQty() {
         var qty = $('#qty').val();
-        var have_packages = {{$game->have_packages}};
+        var have_packages = <?php echo e($game->have_packages); ?>;
         var qty_item = $('#qty_item').val();
         var currency_code = $('#currency_code').val();
-        var discount = {{ $userDiscount ? $userDiscount->amount : 0 }};
+        var discount = <?php echo e($userDiscount ? $userDiscount->amount : 0); ?>;
 
         if(qty_item <= 0 || qty_item === '') {
             Swal.fire({
-                title: '{{__('translation.error')}}',
-                text: '{{__('translation.please_chose_items_first')}}',
+                title: '<?php echo e(__('translation.error')); ?>',
+                text: '<?php echo e(__('translation.please_chose_items_first')); ?>',
                 icon: 'error',
             });
             return false;
@@ -535,14 +566,14 @@
         
         // function getQty() {
         //     var qty = $('#qty').val();
-        //     var have_packages = {{$game->have_packages}};
+        //     var have_packages = <?php echo e($game->have_packages); ?>;
         //     var qty_item = $('#qty_item').val();
         //     var currency_code = $('#currency_code').val();
             
         //     if(qty_item <= 0 || qty_item === '') {
         //         Swal.fire({
-        //             title: '{{__('translation.error')}}',
-        //             text: '{{__('translation.please_chose_items_first')}}',
+        //             title: '<?php echo e(__('translation.error')); ?>',
+        //             text: '<?php echo e(__('translation.please_chose_items_first')); ?>',
         //             icon: 'error',
         //         });
         //         return false;
@@ -580,8 +611,8 @@
                 
                 if(qty_item <= 0 || qty_item === '') {
                     Swal.fire({
-                        title: '{{__('translation.error')}}',
-                        text: '{{__('translation.please_chose_items_first')}}',
+                        title: '<?php echo e(__('translation.error')); ?>',
+                        text: '<?php echo e(__('translation.please_chose_items_first')); ?>',
                         icon: 'error',
                     });
                     submitBtn.prop('disabled', false);
@@ -594,9 +625,10 @@
                 }
                 
                 submitBtn.prop('disabled', true);
-                submitBtn.html('<i class="fa fa-spinner fa-spin"></i> {{__('translation.processing')}}');
+                submitBtn.html('<i class="fa fa-spinner fa-spin"></i> <?php echo e(__('translation.processing')); ?>');
                 return true;
             });
         });
     </script>
-@endsection
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('front.layouts.master', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH D:\Personal\Freelancer\Asmar Market\asmar\resources\views/front/games/show.blade.php ENDPATH**/ ?>

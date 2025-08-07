@@ -49,7 +49,7 @@ class GameController extends Controller
     {
         $category = Category::findOrFail($category);
         $allGames = Game::IsShow()->get();
-        $games = $allGames->where('category_id',$category->id);
+        $games = $allGames->where('category_id', $category->id);
         // dd($category);
         return view('front.games', compact('category', 'games'));
     }
@@ -60,11 +60,11 @@ class GameController extends Controller
         if (Auth::check()) {
             if (Auth::user()->whats_app == null) {
                 return redirect()->route('front.completeRegister');
-            } 
+            }
             $userDiscount = discount::where('user_id', Auth::id())->first();
         } else {
             $userDiscount = null;
-        } 
+        }
 
         $game = Game::with('packages')->IsShow()->where('slug', $slug)->firstOrFail();
 
@@ -103,7 +103,11 @@ class GameController extends Controller
             $user = auth()->user();
             $profit_percentage = $user->level ? $user->level->profit_percentage : 0;
             $profit_amount = ($base_total * $profit_percentage) / 100;
-            $profit_discount = ($base_total * $userDiscount->amount) / 100;
+            if ($userDiscount) {
+                $profit_discount = ($base_total * $userDiscount->amount) / 100;
+            } else {
+                $profit_discount = 0;
+            }
             // dd($profit_discount);
             $final_total = $base_total + $profit_amount - $profit_discount;
 
@@ -121,19 +125,19 @@ class GameController extends Controller
             // check if game is from provider
             if ($game->provider_id) {
                 $provider = Provider::where('id', $game->provider_id)->first();
-            
+
                 $method = $provider->name;
                 if (method_exists(ProvidersController::class, $method)) {
                     $resault = ProvidersController::$method($game, $request, $provider->api_key);
-            
+
                     if ($resault['success']) {
                         $providerId = $provider->id;
-            
+
                         if ($method == 'soud' || $method == 'yassen') {
                             $orderId = $resault['res']->json('data.order_id');
                             $sprice = $resault['res']->json('data.price');
                         }
-            
+
                         Log::info("تم تنفيذ الطلب بنجاح", [
                             'game_id' => $game->id,
                             'provider' => $method,
@@ -182,6 +186,7 @@ class GameController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+            dd($e->getMessage());
             return redirect()->back()->with(['error_m' => __('translation.same_thing_error')]);
         }
     }
