@@ -76,8 +76,8 @@
                         <div class="col-md-4">
                             <div class="mb-3">
                                 <label for="validationCustom02" class="form-label">
-                                    نسبة الخصم</label>
-                                <input type="number" class="form-control" id="validationCustom02" placeholder="نسبة الخصم"
+                                    نسبة الربح</label>
+                                <input type="number" class="form-control" id="validationCustom02" placeholder="نسبة الربح"
                                     required name="percentage" step="any">
                                 <div class="valid-feedback">
                                     @lang('translation.validPrice_qty')
@@ -124,7 +124,7 @@
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label>صورة المنتج</label>
-                                <input type="file" name="image" class="form-control">
+                                <input type="file" name="image" class="form-control" required>
                                 @error('image')<span class="text-danger">{{ $message }}</span>@enderror
                             </div>
                             @isset($bank->image)

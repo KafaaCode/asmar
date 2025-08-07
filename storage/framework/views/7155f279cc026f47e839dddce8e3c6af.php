@@ -132,7 +132,7 @@ unset($__errorArgs, $__bag); ?>
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label>صورة المنتج</label>
-                                <input type="file" name="image" class="form-control">
+                                <input type="file" name="image" class="form-control" required>
                                 <?php $__errorArgs = ['image'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :

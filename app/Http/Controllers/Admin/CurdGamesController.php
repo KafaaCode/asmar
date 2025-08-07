@@ -106,7 +106,7 @@ class CurdGamesController extends Controller
             }
 
             if ($request->percentage) {
-                $final_price = $request->price_temp - ($request->price_temp * ($request->percentage / 100));
+                $final_price = $request->price_temp + ($request->price_temp * ($request->percentage / 100));
             } else {
                 $final_price = $request->price_temp;
             }
@@ -200,7 +200,7 @@ class CurdGamesController extends Controller
             }
 
             if ($request->percentage) {
-                $final_price = $request->price_temp - ($request->price_temp * ($request->percentage / 100));
+                $final_price = $request->price_temp + ($request->price_temp * ($request->percentage / 100));
             } else {
                 $final_price = $request->price_temp;
             }

@@ -122,8 +122,8 @@
 
                             <div class="col-md-3">
                                 <div class="mb-3">
-                                    <label for="validationCustom02" class="form-label">نسبة الخصم</label>
-                                    <input type="number" class="form-control" id="validationCustom02" placeholder="نسبة الخصم"
+                                    <label for="validationCustom02" class="form-label">نسبة الربح</label>
+                                    <input type="number" class="form-control" id="validationCustom02" placeholder="نسبة الربح"
                                            required name="percentage" step="any" value="{{ $game->percentage }}">
                                 </div>
                             </div>
